@@ -1,0 +1,30 @@
+.sider-wrapper {
+    position:sticky;
+    height: 100vh;
+    top:0px;
+    width:340px;
+    border-right:solid;
+    border-right-color:#D1D1D1;
+    border-right-width:1px;
+}
+
+.sider-container {
+    padding: 20px 40px 20px 40px;
+    display:flex;
+    flex-direction:column;
+    gap:50px;
+}
+
+.icon {
+    width:138px;
+}
+
+.options-wrapper {
+    display: flex;
+    flex-direction:column;
+    gap:30px;
+}
+
+.option-text {
+    
+}
