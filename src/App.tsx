@@ -2,13 +2,13 @@ import { Routes, Route } from 'react-router';
 import './App.css'
 import React, { useContext, useEffect } from 'react'
 import { LoginPage } from './pages/login/LoginPage'
-import { HomePage } from './pages/home/HomePage'
+import { HomePage } from './pages/homePage/HomePage'
 import { Context } from './main';
 import { observer } from 'mobx-react-lite'
 
 const App: React.FC = () => {
 
-  const {store} =useContext(Context);
+  const {store} = useContext(Context);
 
   useEffect(() => {
     if (localStorage.getItem('token')) {
@@ -29,9 +29,7 @@ const App: React.FC = () => {
   return (
     <>
       <Routes>
-        
-        <Route path="homepage" element={<HomePage />} />
-        <Route path="" element={<></>} />
+        <Route index path="" element={<HomePage />} />
       </Routes>
     </>
   )
