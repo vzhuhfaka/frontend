@@ -1,19 +1,21 @@
 import './BasePage.css';
-import { useContext } from 'react';
-import { Context } from '../../main';
 import { Sider } from './Sider';
 import { Header } from './Header'
+import type { ReactNode } from 'react';
 
-export function BasePage() {
+interface BasePageProps {
+  children?: ReactNode;
+}
 
-  const {store} =useContext(Context);
-
+export function BasePage({ children }: BasePageProps) {
   return (
     <div className="outer-wrapper">
       <Sider />
       <div className="header-wrapper">
         <Header />
-        <div></div>
+        <div className="main-content">
+          {children}
+        </div>
       </div>
     </div>
   );
