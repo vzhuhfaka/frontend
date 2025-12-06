@@ -8,12 +8,9 @@ COPY package*.json ./
 COPY tsconfig*.json ./
 COPY vite.config.ts ./
 
-# Use npm install instead of npm ci to handle version mismatches
-RUN npm install
-
 # Copy source code
 COPY . .
-
+RUN npm install
 # Build the application
 RUN npm run build
 
