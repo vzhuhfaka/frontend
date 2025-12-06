@@ -8,12 +8,9 @@ COPY package*.json ./
 COPY tsconfig*.json ./
 COPY vite.config.ts ./
 
-# Install dependencies
-RUN npm ci
-
 # Copy source code
 COPY . .
-
+RUN npm install
 # Build the application
 RUN npm run build
 
