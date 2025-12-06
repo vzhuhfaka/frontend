@@ -9,7 +9,7 @@ export default class AuthService {
 )
     }
 
-    static async registration(firstName: string, middleName: string, lastName: string|undefined, ISU: number|undefined, email: string, password: string): Promise<AxiosResponse<AuthResponce>> {
+    static async registration(firstName: string, middleName: string, lastName: string|undefined, email: string, password: string): Promise<AxiosResponse<AuthResponce>> { // ISU: number|undefined
         return $api.post('/v1/users', {
             "email": email,
             "first_name": firstName,
