@@ -33,7 +33,7 @@ const App: React.FC = () => {
       <LoginPage />
     )
   }
-  //<Route index element={<LoginPage />} />
+
   return (
     <>
       <Routes>
