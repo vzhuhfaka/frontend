@@ -7,7 +7,7 @@ import type { AuthResponce } from "../models/responce/AuthResponce.ts";
 
 export default class Store {
     user = {} as IUser
-    isAuth = true
+    isAuth = false
     isLoading = false
 
     isLoginFailed = false
@@ -55,9 +55,9 @@ export default class Store {
         }
     }
 
-    async registration(firstName: string, middleName: string, lastName: string|undefined, ISU: number|undefined, email: string, password: string) {
+    async registration(firstName: string, middleName: string, lastName: string|undefined, email: string, password: string) { //ISU: number|undefined
         try {
-            const response = await AuthService.registration(firstName, middleName, lastName, ISU, email, password);
+            const response = await AuthService.registration(firstName, middleName, lastName, email, password);//ISU
             localStorage.setItem('token', response.data.accessToken)
             this.setAuth(true)
             this.setUser(response.data.user)
