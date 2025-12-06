@@ -40,7 +40,7 @@ const RegistrationForm: FC<LoginFormProps> = ({setRegistration}) => {
             } else if (password !== secondPassword) {
                 alert("Пароли не совпадают, пожалуйста проверьте корректность введенных данных");
             } else {
-                 await store.registration(firstName, middleName, lastName, ISU, email, password)
+                 await store.registration(firstName, middleName, lastName, email, password)//ISU
             }
             setFormSent(false)
         };
