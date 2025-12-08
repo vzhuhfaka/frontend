@@ -14,7 +14,8 @@ export default defineConfig({
     allowedHosts: [
       'fpin-projects.ru',
       'localhost',
-      '127.0.0.1'
+      '127.0.0.1',
+      'fpin-projects.ru:1268'
     ]
   }
 })
