@@ -20,16 +20,6 @@ export function Persona({ user }: PersonaProps) {
     return user.email || 'Email не указан';
   };
 
-  // Формируем номер ИСУ (если есть)
-  const getIsuNumber = () => {
-    return user.isu_number ? `ИСУ: ${user.isu_number}` : 'ИСУ не указан';
-  };
-
-  // Формируем Telegram никнейм (если есть)
-  const getTelegram = () => {
-    return user.tg_nickname ? `@${user.tg_nickname}` : 'Telegram не указан';
-  };
-
   return (
     <div className="persona-card">
       <div className="persona-header">

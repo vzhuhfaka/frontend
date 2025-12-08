@@ -8,12 +8,11 @@ COPY package*.json ./
 COPY tsconfig*.json ./
 COPY vite.config.ts ./
 
-# Install dependencies
-RUN npm install
-
 # Copy source code
 COPY . .
 
+# Install dependencies
+RUN npm install
 # Build the application for production
 RUN npm run build
 
