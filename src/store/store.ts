@@ -83,8 +83,7 @@ export default class Store {
             // Сбрасываем состояние аутентификации
             this.setAuth(false);
             this.setUser({} as IUser);
-            
-            // Убираем токен если он был (на всякий случай)
+
             localStorage.removeItem('token');
             
         } catch(e) {

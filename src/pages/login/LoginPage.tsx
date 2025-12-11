@@ -6,6 +6,13 @@ import { useState } from 'react'
 export function LoginPage() {
   const [registration, setRegistration] = useState<boolean>(false)
 
+  // Функция для переключения на форму логина после успешной регистрации
+  const handleRegistrationSuccess = () => {
+    setRegistration(false);
+    // Опционально: показать уведомление об успешной регистрации
+    alert('Регистрация успешна! Теперь вы можете войти в систему.');
+  }
+
   return (
     <div className="wrapper">
       <div className="icon-div">
@@ -13,7 +20,13 @@ export function LoginPage() {
       </div>
       
       <div className="login-form-wrapper">
-          {registration ? <RegistrationForm setRegistration={setRegistration} /> : <LoginForm setRegistration={setRegistration} />}
+          {registration ? 
+            <RegistrationForm 
+              setRegistration={setRegistration} 
+              onRegistrationSuccess={handleRegistrationSuccess}
+            /> : 
+            <LoginForm setRegistration={setRegistration} />
+          }
       </div>
     </div>
   );

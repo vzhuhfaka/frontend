@@ -3,10 +3,10 @@ import React, { useState, useContext } from 'react'
 import { Context } from "../../main"
 import { observer } from 'mobx-react-lite'
 import { Box, Button, TextField, FormHelperText } from '@mui/material';
-import type { LoginFormProps } from '../../models/LoginPageProps';
+import type { RegistrationFormProps } from '../../models/LoginPageProps';
 import './Form.css';
 
-const RegistrationForm: FC<LoginFormProps> = ({setRegistration}) => {
+const RegistrationForm: FC<RegistrationFormProps> = ({setRegistration, onRegistrationSuccess}) => {
 
     const [firstName, setFirstName ] = useState<string>('')
     const [firstNameError, setFirstNameError] = useState<string>('')
@@ -40,8 +40,18 @@ const RegistrationForm: FC<LoginFormProps> = ({setRegistration}) => {
             } else if (password !== secondPassword) {
                 alert("Пароли не совпадают, пожалуйста проверьте корректность введенных данных");
             } else {
-                 const isuNumber = isu ? parseInt(isu) : undefined
-                 await store.registration(firstName, middleName, lastName, email, password, isuNumber)
+                 try {
+                     const isuNumber = isu ? parseInt(isu) : undefined
+                     await store.registration(firstName, middleName, lastName, email, password, isuNumber)
+                     // Если мы дошли до этой точки, регистрация прошла успешно
+                     // Сбрасываем состояние ошибки регистрации
+                     store.setRegistrationFailed(false);
+                     // Вызываем callback для переключения на форму логина
+                     onRegistrationSuccess();
+                 } catch (error) {
+                     // Ошибка уже обработана в store, просто оставляем как есть
+                     console.log('Registration failed:', error);
+                 }
             }
             setFormSent(false)
         };

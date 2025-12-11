@@ -12,6 +12,7 @@ export default defineConfig({
   ],
   server: {
     allowedHosts: [
+      'test.1855789-cn23133.twc1.net',
       'fpin-projects.ru',
       'localhost',
       '127.0.0.1',
