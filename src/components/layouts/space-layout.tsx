@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router";
-import { Home, LayoutGrid, Plus, Search, Bell, UserCircle } from "lucide-react";
+import { Home, LayoutGrid, Plus, Search, Bell } from "lucide-react";
 import { paths } from "@/config/paths";
 import { cn } from "@/utils/cn";
 import { Button } from "@/components/ui/button";
