@@ -34,7 +34,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
     };
 
     return (
-        <div className="bg-white w-full max-w-[560px] p-6 bg-white rounded-2xl ">
+        <div className="bg-white w-full max-w-[560px] px-12 py-8 bg-white rounded-2xl ">
             <h1 className="text-3xl font-bold text-center text-blue-600 mb-8">EduSpace</h1>
 
             <Form {...form}>
@@ -100,7 +100,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
                                 Запомнить меня
                             </label>
                         </div>
-                        <Link to="#" className="text-sm text-blue-600 hover:underline">
+                        <Link to={paths.auth.reset.getHref(redirectTo)} className="text-sm text-blue-600 hover:underline">
                             Сбросить пароль
                         </Link>
                     </div>

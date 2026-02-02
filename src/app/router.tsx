@@ -2,7 +2,7 @@ import { QueryClient, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
-import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
+import type { LoaderFunction, ActionFunction } from "react-router";
 
 import { paths } from "@/config/paths";
 import { ProtectedRoute } from "@/lib/auth";
@@ -10,8 +10,8 @@ import { ProtectedRoute } from "@/lib/auth";
 import { default as AppRoot, ErrorBoundary as AppRootErrorBoundary } from "./routes/app/root";
 
 type LazyModule = {
-    clientLoader?: (client: QueryClient) => LoaderFunctionArgs;
-    clientAction?: (client: QueryClient) => ActionFunctionArgs;
+    clientLoader?: (client: QueryClient) => LoaderFunction;
+    clientAction?: (client: QueryClient) => ActionFunction;
     default: React.ComponentType<unknown>;
     [key: string]: unknown;
 };
@@ -39,6 +39,10 @@ export const createAppRouter = (queryClient: QueryClient) =>
         {
             path: paths.auth.login.path,
             lazy: () => import("./routes/auth/login").then(convert(queryClient)),
+        },
+        {
+           path: paths.auth.reset.path,
+           lazy: () => import("./routes/auth/reset").then(convert(queryClient)),
         },
         {
             path: paths.app.root.path,
