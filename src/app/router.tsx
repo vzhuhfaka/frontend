@@ -60,6 +60,21 @@ export const createAppRouter = (queryClient: QueryClient) =>
             ],
         },
         {
+            path: paths.app.root.path,
+            element: (
+                <ProtectedRoute>
+                    <AppRoot />
+                </ProtectedRoute>
+            ),
+            ErrorBoundary: AppRootErrorBoundary,
+            children: [
+                {
+                    path: paths.app.chats.path,
+                    lazy: () => import("./routes/app/chats").then(convert(queryClient)),
+                },
+            ],
+        },
+        {
             path: "*",
             lazy: () => import("./routes/not-found").then(convert(queryClient)),
         },
@@ -71,4 +86,4 @@ export const AppRouter = () => {
     const router = useMemo(() => createAppRouter(queryClient), [queryClient]);
 
     return <RouterProvider router={router} />;
-};
+};  
