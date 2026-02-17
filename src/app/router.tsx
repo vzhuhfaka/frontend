@@ -57,20 +57,14 @@ export const createAppRouter = (queryClient: QueryClient) =>
                     path: paths.app.spaces.path,
                     lazy: () => import("./routes/app/spaces").then(convert(queryClient)),
                 },
-            ],
-        },
-        {
-            path: paths.app.root.path,
-            element: (
-                <ProtectedRoute>
-                    <AppRoot />
-                </ProtectedRoute>
-            ),
-            ErrorBoundary: AppRootErrorBoundary,
-            children: [
+                
                 {
-                    path: paths.app.chats.path,
+                    path: paths.app.chats.main.path,
                     lazy: () => import("./routes/app/chats").then(convert(queryClient)),
+                },
+                {
+                    path: paths.app.chats.create.path,
+                    lazy: () => import("./routes/app/create-chat").then(convert(queryClient)),
                 },
             ],
         },

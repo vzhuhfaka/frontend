@@ -32,8 +32,14 @@ export const paths = {
             getHref: () => "/app",
         },
         chats: {
-            path: "chats",
-            getHref: () => "/app/chats"
+            main: {
+                path: "chats",
+                getHref: () => "/app/chats"
+            },
+            create: {
+                path: "chats/create",
+                getHref: () => "/app/chats/create"
+            }
         }
     },
 } as const;
