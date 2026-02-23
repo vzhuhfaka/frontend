@@ -16,7 +16,7 @@ export const useWebSocket = (chatId: number | null, topicId: number | null) => {
         socketRef.current = ws;
 
         ws.onopen = () => {
-            console.log('✅ WebSocket connected');
+            console.log('WebSocket connected');
             setIsConnected(true);
             
             // Отправляем join_chat
@@ -27,7 +27,7 @@ export const useWebSocket = (chatId: number | null, topicId: number | null) => {
         };
 
         ws.onmessage = (event) => {
-            console.log('📩 Received:', event.data);
+            console.log('Received:', event.data);
             try {
                 const data = JSON.parse(event.data);
                 setMessages(prev => [...prev, data]);
@@ -37,12 +37,12 @@ export const useWebSocket = (chatId: number | null, topicId: number | null) => {
         };
 
         ws.onclose = (event) => {
-            console.log('❌ Disconnected:', event.code, event.reason);
+            console.log('Disconnected:', event.code, event.reason);
             setIsConnected(false);
         };
 
         ws.onerror = (error) => {
-            console.error('🔴 WebSocket error:', error);
+            console.error('WebSocket error:', error);
         };
 
     }, [chatId, topicId]);
@@ -60,7 +60,7 @@ export const useWebSocket = (chatId: number | null, topicId: number | null) => {
                 event: "send_message",
                 data: { content }
             };
-            console.log('📤 Sending:', msg);
+            console.log('Sending:', msg);
             socketRef.current.send(JSON.stringify(msg));
         } else {
             console.warn('WebSocket not connected');
@@ -73,7 +73,7 @@ export const useWebSocket = (chatId: number | null, topicId: number | null) => {
                 event: "read_messages",
                 data: { message_ids: idMessages }
             };
-            console.log('👁️ Mark as read:', msg);
+            console.log('Mark as read:', msg);
             socketRef.current.send(JSON.stringify(msg));
         }
     }, []);

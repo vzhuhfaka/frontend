@@ -7,6 +7,7 @@ export interface Message {
     author: string;
     content: string;
     time: string;
+    createdAt?: string;
     sender_id: number;
 }
 
@@ -32,13 +33,20 @@ export const useMessages = (chatId: number | null, topicId: number | null) => {
         const fetchMessages = async () => {
             try {
                 setLoading(true);
+                setError(null);
 
                 const response = await api.get(
                     `/chats/${chatId}/messages?topic_id=${topicId}`
                 ) as MessagesResponse;
                 
-                setMessages(response.messages);
-                setError(null);
+                // Нормализуем данные сообщений
+                const normalizedMessages = response.messages.map(msg => ({
+                    ...msg,
+                    // Убеждаемся что есть поле time для сортировки
+                    time: msg.time || msg.createdAt || new Date().toISOString()
+                }));
+                
+                setMessages(normalizedMessages);
             } catch (err) {
                 setError("Failed to load messages");    
                 console.error("Error fetching messages:", err);
