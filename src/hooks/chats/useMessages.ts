@@ -3,12 +3,12 @@ import { useState, useEffect } from "react";
 import { api } from "@/lib/api-client";
 
 export interface Message {
-    id: number;
-    author: string;
+    id?: number;  // делаем опциональным для временных сообщений
+    author?: string;  // делаем опциональным
     content: string;
-    time: string;
+    time?: string;
     createdAt?: string;
-    sender_id: number;
+    sender_id?: number;  // делаем опциональным
 }
 
 interface MessagesResponse {

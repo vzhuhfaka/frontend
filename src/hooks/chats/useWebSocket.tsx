@@ -1,22 +1,26 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { paths } from "@/config/paths";
 
-export const useWebSocket = (chatId: number | null, topicId: number | null) => {
+export const useWebSocket = (chatId: number | null, topicId: number | null, userId: number | null) => {
     const socketRef = useRef<WebSocket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState<any[]>([]);
 
-    const connect = useCallback(() => {
-        if (!chatId || !topicId) return;
+    // Очищаем сообщения при смене чата или топика
+    useEffect(() => {
+        setMessages([]);
+    }, [chatId, topicId]);
 
-        const url = paths.app.chats.wsMessages.getHref(chatId, topicId);
-        console.log('Connecting to:', url);
-        
+    const connect = useCallback(() => {
+        if (!chatId || !topicId || !userId) return;
+
+        // Добавляем user_id в query параметры
+        const url = `${paths.app.chats.wsMessages.getHref(chatId, topicId)}?user_id=${userId}`;
+         
         const ws = new WebSocket(url);
         socketRef.current = ws;
 
         ws.onopen = () => {
-            console.log('WebSocket connected');
             setIsConnected(true);
             
             // Отправляем join_chat
@@ -27,17 +31,31 @@ export const useWebSocket = (chatId: number | null, topicId: number | null) => {
         };
 
         ws.onmessage = (event) => {
-            console.log('Received:', event.data);
             try {
                 const data = JSON.parse(event.data);
-                setMessages(prev => [...prev, data]);
+                
+                // Нормализуем сообщение от бэка
+                const normalizeMessage = (msg: any): any => {
+                    return {
+                        id: msg.id || Date.now(),
+                        content: msg.content || '',
+                        author: msg.author || msg.user_name || 'Пользователь',
+                        time: msg.time || msg.created_at || new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+                        sender_id: msg.sender_id || msg.user_id || 0,
+                    };
+                };
+
+                // Обрабатываем разные типы сообщений
+                if (data.event === 'new_message') {
+                    const newMessage = normalizeMessage(data.data);
+                    setMessages(prev => [...prev, newMessage]);
+                } 
             } catch (e) {
                 console.error('Parse error:', e);
             }
         };
 
-        ws.onclose = (event) => {
-            console.log('Disconnected:', event.code, event.reason);
+        ws.onclose = () => {
             setIsConnected(false);
         };
 
@@ -45,7 +63,7 @@ export const useWebSocket = (chatId: number | null, topicId: number | null) => {
             console.error('WebSocket error:', error);
         };
 
-    }, [chatId, topicId]);
+    }, [chatId, topicId, userId]);
 
     useEffect(() => {
         connect();
@@ -60,7 +78,6 @@ export const useWebSocket = (chatId: number | null, topicId: number | null) => {
                 event: "send_message",
                 data: { content }
             };
-            console.log('Sending:', msg);
             socketRef.current.send(JSON.stringify(msg));
         } else {
             console.warn('WebSocket not connected');
@@ -78,9 +95,20 @@ export const useWebSocket = (chatId: number | null, topicId: number | null) => {
         }
     }, []);
 
+    const sendTyping = useCallback((isTyping: boolean) => {
+        if (socketRef.current?.readyState === WebSocket.OPEN) {
+            const msg = {
+                event: "typing",
+                data: { is_typing: isTyping }
+            };
+            socketRef.current.send(JSON.stringify(msg));
+        }
+    }, []);
+
     return { 
         sendMessage, 
         readMessages,
+        sendTyping,
         isConnected,
         messages 
     };

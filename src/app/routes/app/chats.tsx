@@ -37,9 +37,23 @@ const ChatsArea = () => {
     // Получаем данные
     const { chats, loading: chatsLoading, error: chatsError } = useChats();
     const { topics, loading: topicsLoading, error: topicsError } = useTopics(selectedChatId);
-    const { messages, loading: messagesLoading, error: messagesError } = useMessages(selectedChatId, selectedTopicId);
+    const { messages: historyMessages, loading: messagesLoading, error: messagesError } = useMessages(selectedChatId, selectedTopicId);
 
-    const { messages: messagesWs, sendMessage, isConnected } = useWebSocket(selectedChatId, selectedTopicId)
+    const { messages: wsMessages, sendMessage, isConnected } = useWebSocket(
+    selectedChatId, 
+    selectedTopicId,
+    authMe?.id // Передаем ID пользователя
+);
+
+
+    // Объединяем и сортируем сообщения
+    const allMessages = [...historyMessages, ...wsMessages].sort((a, b) => {
+        // Сортировка по времени (предполагаем, что есть поле createdAt или time)
+        const timeA = new Date(a.time || a.createdAt || 0).getTime();
+        const timeB = new Date(b.time || b.createdAt || 0).getTime();
+        return timeA - timeB;
+    });
+
 
     // Обработчик выбора чата
     const handleChatSelect = (chat: Chat) => {
@@ -243,10 +257,14 @@ const ChatsArea = () => {
                                         <div className="flex items-center justify-center h-full">
                                             <p className="text-red-400">{messagesError}</p>
                                         </div>
-                                    ) : messages.length > 0 ? (
+                                    ) : allMessages.length > 0 ? (
                                         <div className="space-y-4">
-                                            {messages.map((message) => (
-                                                <MessageItem key={message.id} message={message} myId={authMe?.id}/>
+                                            {allMessages.map((message, index) => (
+                                                <MessageItem 
+                                                    key={message.id || `ws-${index}`} 
+                                                    message={message} 
+                                                    myId={authMe?.id}
+                                                />
                                             ))}
                                         </div>
                                     ) : (
