@@ -1,3 +1,4 @@
+
 export const paths = {
     home: {
         path: "/",
@@ -39,6 +40,13 @@ export const paths = {
             create: {
                 path: "chats/create",
                 getHref: () => "/app/chats/create"
+            },
+            createTopic: {
+                path: "chats/:chatId/create/topic",
+                getHref: (chatId: number) => `/app/chats/${chatId}/create/topic`
+            },
+            wsMessages: {
+                getHref: (chatId: number, topicId: number) => `ws://localhost:8000/v1/ws/chats/${chatId}/topics/${topicId}/messages`
             }
         }
     },

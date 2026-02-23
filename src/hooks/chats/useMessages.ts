@@ -2,13 +2,12 @@ import { useState, useEffect } from "react";
 
 import { api } from "@/lib/api-client";
 
-interface Message {
+export interface Message {
     id: number;
     author: string;
     content: string;
     time: string;
-    isOwn: boolean;
-    topicId?: number;
+    sender_id: number;
 }
 
 interface MessagesResponse {

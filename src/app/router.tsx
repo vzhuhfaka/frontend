@@ -66,6 +66,10 @@ export const createAppRouter = (queryClient: QueryClient) =>
                     path: paths.app.chats.create.path,
                     lazy: () => import("./routes/app/create-chat").then(convert(queryClient)),
                 },
+                {
+                    path: paths.app.chats.createTopic.path,
+                    lazy: () => import("./routes/app/create-topic").then(convert(queryClient)),
+                },
             ],
         },
         {

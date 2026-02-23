@@ -1,13 +1,7 @@
-type Message = {
-    id: number;
-    author: string;
-    content: string;
-    time: string;
-    isOwn?: boolean;
-};
+import { type Message } from "@/hooks/chats/useMessages";
 
-export const MessageItem = ({ message }: { message: Message }) => {
-    const isOwn = message.isOwn;
+export const MessageItem = ({ message, myId }: { message: Message, myId: number }) => {
+    const isOwn = message.sender_id == myId;
     
     return (
         <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-4`}>

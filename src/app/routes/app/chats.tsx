@@ -4,8 +4,8 @@ import { ContentLayout } from "@/components/layouts";
 import { Input } from "@/components/ui/input/input";
 import { Button } from "@/components/ui/button";
 
-import { SidebarChat } from "@/features/chats/components/sidebar-chat";
-import { TopicTheme } from "@/features/chats/components/topic-theme";
+import { SidebarChat } from "@/features/chats/components/sidebar-item";
+import { TopicTheme } from "@/features/chats/components/topic-item";
 import { MessageItem } from "@/features/chats/components/message-item";
 
 import { useState, useEffect } from "react";
@@ -14,25 +14,32 @@ import { useNavigate } from "react-router";
 import { useChats } from "@/hooks/chats/useChats";
 import { useTopics } from "@/hooks/chats/useTopics";
 import { useMessages } from "@/hooks/chats/useMessages";
+import { useWebSocket } from "@/hooks/chats/useWebSocket";
+import { useAuthMe } from "@/hooks/chats/useAuthMe";
 
 import { type Chat } from "@/hooks/chats/useChats";
 import { type Topic } from "@/hooks/chats/useTopics";
 
 import { paths } from "@/config/paths";
+import { Header } from "@/features/chats/components/header";
 
 
 const ChatsArea = () => {
     const navigate = useNavigate();
+    const { authMe }= useAuthMe();
     
     // Состояния для выбранных элементов
     const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
     const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null);
     const [selectedChatName, setSelectedChatName] = useState<string>("");
+    const [input, setInput] = useState("")
 
     // Получаем данные
     const { chats, loading: chatsLoading, error: chatsError } = useChats();
     const { topics, loading: topicsLoading, error: topicsError } = useTopics(selectedChatId);
     const { messages, loading: messagesLoading, error: messagesError } = useMessages(selectedChatId, selectedTopicId);
+
+    const { messages: messagesWs, sendMessage, isConnected } = useWebSocket(selectedChatId, selectedTopicId)
 
     // Обработчик выбора чата
     const handleChatSelect = (chat: Chat) => {
@@ -90,20 +97,7 @@ const ChatsArea = () => {
         <ContentLayout title="Чаты">
             <div className="mx-auto max-w-7xl p-6">
                 {/* Header Section */}
-                <div className="mb-8 flex items-center justify-between">
-                    <div>
-                        <h1 className="mb-1 text-2xl font-bold text-gray-900">
-                            Чаты
-                        </h1>
-                        <p className="text-sm text-gray-500">
-                            Общайтесь с участниками в реальном времени
-                        </p>
-                    </div>
-                    <Button className="gap-2" onClick={() => {navigate(paths.app.chats.create.getHref())}}>
-                        <Plus size={18} />
-                        Создать чат
-                    </Button>
-                </div>
+                <Header />
 
                 <div className="grid gap-6 lg:grid-cols-4">
                     {/* Sidebar with Chats */}
@@ -182,7 +176,7 @@ const ChatsArea = () => {
                             
                             {selectedChatId ? (
                                 <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-                                    <Button onClick={()=>{}}>
+                                    <Button onClick={()=>{navigate(paths.app.chats.createTopic.getHref(selectedChatId))}}>
                                         <Plus/>Создать тему
                                     </Button>
                                     {topics.map((topic) => (
@@ -252,7 +246,7 @@ const ChatsArea = () => {
                                     ) : messages.length > 0 ? (
                                         <div className="space-y-4">
                                             {messages.map((message) => (
-                                                <MessageItem key={message.id} message={message} />
+                                                <MessageItem key={message.id} message={message} myId={authMe?.id}/>
                                             ))}
                                         </div>
                                     ) : (
@@ -268,19 +262,31 @@ const ChatsArea = () => {
 
                                 {/* Input Area */}
                                 <div className="border-t border-gray-100 bg-white p-4">
+                                    <div>
+                                        Статус: 
+                                        <span style={{ color: isConnected ? 'green' : 'red' }}>
+                                            {isConnected ? ' Connected' : ' Disconnected'}
+                                        </span>
+                                    </div>
                                     <div className="flex gap-3">
                                         <Input
-                                            placeholder={selectedTopicId 
-                                                ? "Написать сообщение..." 
-                                                : "Выберите тему для отправки сообщения"}
+                                            placeholder={"Написать сообщение..."}
+                                            value={input}
                                             className="flex-1 bg-gray-50 border-gray-200 focus:bg-white"
                                             disabled={!selectedTopicId}
+                                            onChange={(e) => {
+                                                setInput(e.target.value)
+                                            }}
                                         />
                                         <Button 
                                             className="gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
                                             disabled={!selectedTopicId}
+                                            onClick={() => {
+                                                sendMessage(input);
+                                                setInput("")
+                                            }}
                                         >
-                                            <Send size={16} />
+                                            <Send size={16}/>
                                             Отправить
                                         </Button>
                                     </div>
