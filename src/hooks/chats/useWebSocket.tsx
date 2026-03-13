@@ -5,10 +5,12 @@ export const useWebSocket = (chatId: number | null, topicId: number | null, user
     const socketRef = useRef<WebSocket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState<any[]>([]);
+    const BASE_RECONNECT_DELAY = 1000; // 1 секунда
 
     // Очищаем сообщения при смене чата или топика
     useEffect(() => {
         setMessages([]);
+        
     }, [chatId, topicId]);
 
     const connect = useCallback(() => {
@@ -55,8 +57,11 @@ export const useWebSocket = (chatId: number | null, topicId: number | null, user
             }
         };
 
-        ws.onclose = () => {
+        ws.onclose = (event) => {
             setIsConnected(false);
+            if (!event.wasClean) {
+                reconnect();
+            }
         };
 
         ws.onerror = (error) => {
@@ -104,6 +109,13 @@ export const useWebSocket = (chatId: number | null, topicId: number | null, user
             socketRef.current.send(JSON.stringify(msg));
         }
     }, []);
+
+    const reconnect = useCallback(() => {
+        setTimeout(() => {
+            console.log('Attempting to reconnect WebSocket...');
+            connect();
+        }, BASE_RECONNECT_DELAY);
+    }, [connect]);
 
     return { 
         sendMessage, 

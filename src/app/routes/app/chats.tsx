@@ -43,7 +43,7 @@ const ChatsArea = () => {
     selectedChatId, 
     selectedTopicId,
     authMe?.id // Передаем ID пользователя
-);
+    );
 
 
     // Объединяем и сортируем сообщения
