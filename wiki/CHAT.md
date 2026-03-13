@@ -214,6 +214,24 @@ const handleCreate = async () => {
 | `user_left`       | `{ "user_id": 3 }`                                                                          | Пользователь покинул чат             |
 | `message_read`    | `{ "user_id": 3, "message_ids": [10, 11] }`                                                 | Пользователь прочитал сообщения   
 
+### 5.3 Механизм переподключения
+Функция с внутренним таймером для переподключения
+```ts
+const reconnect = useCallback(() => {
+        setTimeout(() => {
+            console.log('Attempting to reconnect WebSocket...');
+            connect();
+        }, BASE_RECONNECT_DELAY);
+    }, [connect]);
+```
+Пример использования в useWebSocket.ts
+```ts
+if (!event.wasClean) {
+    reconnect();
+}
+```
+
+
 ## 6 Пример использования
 ```tsx
 import { useState } from "react";
