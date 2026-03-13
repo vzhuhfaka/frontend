@@ -5,7 +5,7 @@ export const useWebSocket = (chatId: number | null, topicId: number | null, user
     const socketRef = useRef<WebSocket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState<any[]>([]);
-    const BASE_RECONNECT_DELAY = 1000; // 1 секунда
+    const BASE_RECONNECT_DELAY = 0; // 1 секунда
 
     // Очищаем сообщения при смене чата или топика
     useEffect(() => {

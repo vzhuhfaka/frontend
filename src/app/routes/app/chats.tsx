@@ -8,7 +8,7 @@ import { SidebarChat } from "@/features/chats/components/sidebar-item";
 import { TopicTheme } from "@/features/chats/components/topic-item";
 import { MessageItem } from "@/features/chats/components/message-item";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 
 import { useChats } from "@/hooks/chats/useChats";
@@ -27,6 +27,7 @@ import { Header } from "@/features/chats/components/header";
 const ChatsArea = () => {
     const navigate = useNavigate();
     const { authMe }= useAuthMe();
+    const messagesEndRef = useRef<HTMLDivElement>(null);
     
     // Состояния для выбранных элементов
     const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
@@ -54,6 +55,15 @@ const ChatsArea = () => {
         return timeA - timeB;
     });
 
+    // Функция для прокрутки вниз
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    // Прокрутка при изменении сообщений
+    useEffect(() => {
+        scrollToBottom();
+    }, [allMessages]); // Зависимость от всех сообщений
 
     // Обработчик выбора чата
     const handleChatSelect = (chat: Chat) => {
@@ -266,6 +276,7 @@ const ChatsArea = () => {
                                                     myId={authMe?.id}
                                                 />
                                             ))}
+                                            <div ref={messagesEndRef} />
                                         </div>
                                     ) : (
                                         <div className="flex items-center justify-center h-full">
@@ -294,6 +305,15 @@ const ChatsArea = () => {
                                             disabled={!selectedTopicId}
                                             onChange={(e) => {
                                                 setInput(e.target.value)
+                                            }}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' && !e.shiftKey) {
+                                                        e.preventDefault(); // Предотвращаем добавление новой строки
+                                                        if (input.trim() && selectedTopicId) {
+                                                            sendMessage(input);
+                                                            setInput("");
+                                                        }
+                                                    }
                                             }}
                                         />
                                         <Button 

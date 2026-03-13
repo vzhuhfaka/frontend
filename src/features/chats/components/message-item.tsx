@@ -9,14 +9,38 @@ export const MessageItem = ({ message, myId }: { message: Message, myId: number 
         return message.author[0]?.toUpperCase() || '?';
     };
 
-    // Форматирование времени
+    // Форматирование времени с проверкой на сегодня
     const formatTime = (time: string | undefined) => {
         if (!time) return '';
+        
         try {
-            return new Date(time).toLocaleTimeString('ru-RU', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+            const messageDate = new Date(time);
+            const today = new Date();
+            
+            // Сбрасываем время для корректного сравнения дат
+            const messageDateWithoutTime = new Date(messageDate);
+            messageDateWithoutTime.setHours(0, 0, 0, 0);
+            
+            const todayWithoutTime = new Date(today);
+            todayWithoutTime.setHours(0, 0, 0, 0);
+            
+            // Проверяем, сегодня ли сообщение
+            if (messageDateWithoutTime.getTime() === todayWithoutTime.getTime()) {
+                // Сегодня - показываем только время
+                return messageDate.toLocaleTimeString('ru-RU', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } else {
+                // Не сегодня - показываем дату и время
+                return messageDate.toLocaleString('ru-RU', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
         } catch {
             return time;
         }

@@ -43,7 +43,7 @@ export const useMessages = (chatId: number | null, topicId: number | null) => {
                 const normalizedMessages = response.messages.map(msg => ({
                     ...msg,
                     // Убеждаемся что есть поле time для сортировки
-                    time: msg.time || msg.createdAt || new Date().toISOString()
+                    time: msg.time || new Date().toISOString()
                 }));
                 
                 setMessages(normalizedMessages);
