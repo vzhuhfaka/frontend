@@ -3,6 +3,8 @@ import { useState } from "react";
 
 interface CreateChatData {
     name: string;
+    is_group?: boolean;
+    member_ids?: number[]
 }
 
 export const useCreateChat = () => {
@@ -15,7 +17,12 @@ export const useCreateChat = () => {
             setLoading(true);
             setError(null);
             console.log(data)
-            const response = await api.post("/chats", data);
+
+            const payload = {
+                ...data,
+                is_group: data.is_group ?? true
+            }
+            const response = await api.post("/chats", payload);
             
             if (response) {
                 setResCode(response.status);

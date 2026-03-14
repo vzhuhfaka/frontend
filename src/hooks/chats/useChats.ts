@@ -30,6 +30,9 @@ export const useChats = () => {
                 if (Array.isArray(response)) {
                     setChats(response);
                 }
+                // else if (response && Array.isArray(response.chats)) {
+                //     setChats(response.chats)
+                // }
 
                 setError(null);
             } catch (err) {
