@@ -41,9 +41,8 @@ const ChatsArea = () => {
     const { messages: historyMessages, loading: messagesLoading, error: messagesError } = useMessages(selectedChatId, selectedTopicId);
 
     const { messages: wsMessages, sendMessage, isConnected } = useWebSocket(
-    selectedChatId, 
-    selectedTopicId,
-    authMe?.id // Передаем ID пользователя
+        selectedChatId, 
+        selectedTopicId
     );
 
 
@@ -77,7 +76,7 @@ const ChatsArea = () => {
         setSelectedTopicId(topic.id);
     };
 
-    
+    // Обработчик отправки сообщения
     const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -166,7 +165,7 @@ const ChatsArea = () => {
                                             time={chat.time}
                                             unread={chat.unread}
                                             isActive={selectedChatId === chat.id}
-                                            color={chat.color}
+                                        
                                         />
                                     </div>
                                 ))}
@@ -334,6 +333,7 @@ const ChatsArea = () => {
                                         <p className="text-xs text-gray-400">
                                             Нажмите Enter для отправки
                                         </p>
+
                                     </div>
                                 </div>
                             </div>

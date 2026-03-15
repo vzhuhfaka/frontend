@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { paths } from "@/config/paths";
 
-export const useWebSocket = (chatId: number | null, topicId: number | null, userId: number | null) => {
+const getAuthToken = (): string | null => {
+    return localStorage.getItem("token");
+}
+
+export const useWebSocket = (chatId: number | null, topicId: number | null) => {
     const socketRef = useRef<WebSocket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState<any[]>([]);
@@ -14,10 +18,16 @@ export const useWebSocket = (chatId: number | null, topicId: number | null, user
     }, [chatId, topicId]);
 
     const connect = useCallback(() => {
-        if (!chatId || !topicId || !userId) return;
+        if (!chatId || !topicId) return;
+
+        const token = getAuthToken();
+        if (!token) {
+            console.error("No auth token found");
+            return;
+        }
 
         // Добавляем user_id в query параметры
-        const url = `${paths.app.chats.wsMessages.getHref(chatId, topicId)}?user_id=${userId}`;
+        const url = `${paths.app.chats.wsMessages.getHref(chatId, topicId)}?token=${token}`;
          
         const ws = new WebSocket(url);
         socketRef.current = ws;
@@ -68,7 +78,7 @@ export const useWebSocket = (chatId: number | null, topicId: number | null, user
             console.error('WebSocket error:', error);
         };
 
-    }, [chatId, topicId, userId]);
+    }, [chatId, topicId]);
 
     useEffect(() => {
         connect();

@@ -24,9 +24,13 @@ export const useTopics = (chatId: number | null) => {
         const fetchTopics = async () => {
             try {
                 setLoading(true);
-                const data = await api.get(`/chats/${chatId}/topics`) as Topic[];
+                const response: any = await api.get(`/chats/${chatId}/topics`);
+                const data = response && Array.isArray(response.topics) 
+                    ? response.topics 
+                    : [];
+
                 // Добавляем chatId к каждому топику
-                const topicsWithChatId = data.map(topic => ({
+                const topicsWithChatId = data.map((topic: any) => ({
                     ...topic,
                     chatId
                 }));

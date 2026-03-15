@@ -10,9 +10,7 @@ export interface Chat {
     lastMessageAuthor: string;
     time: string;
     members: number;
-    unread: number;
-    isActive: boolean;
-    color?: string;
+    unread: number
 }
 
 // Хук для получения списка чатов
@@ -25,10 +23,10 @@ export const useChats = () => {
         const fetchChats = async () => {
             try {
                 setLoading(true);
-                const response = await api.get("/chats");
+                const response: any = await api.get("/chats");
                 
-                if (Array.isArray(response)) {
-                    setChats(response);
+                if (Array.isArray(response.chats)) {
+                    setChats(response.chats);
                 }
                 // else if (response && Array.isArray(response.chats)) {
                 //     setChats(response.chats)
