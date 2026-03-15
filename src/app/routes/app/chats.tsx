@@ -8,7 +8,7 @@ import { SidebarChat } from "@/features/chats/components/sidebar-item";
 import { TopicTheme } from "@/features/chats/components/topic-item";
 import { MessageItem } from "@/features/chats/components/message-item";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router";
 
 import { useChats } from "@/hooks/chats/useChats";
@@ -76,6 +76,17 @@ const ChatsArea = () => {
     const handleTopicSelect = (topic: Topic) => {
         setSelectedTopicId(topic.id);
     };
+
+    
+    const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (input.trim() && selectedTopicId) {
+        sendMessage(input);
+        setInput("");
+    }
+}, [input, selectedTopicId, sendMessage]);
 
     // Автоматически выбираем первый топик при загрузке топиков
     useEffect(() => {
@@ -298,46 +309,31 @@ const ChatsArea = () => {
                                         </span>
                                     </div>
                                     <div className="flex gap-3">
-                                        <Input
-                                            placeholder={"Написать сообщение..."}
-                                            value={input}
-                                            className="flex-1 bg-gray-50 border-gray-200 focus:bg-white"
-                                            disabled={!selectedTopicId}
-                                            onChange={(e) => {
-                                                setInput(e.target.value)
-                                            }}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter' && !e.shiftKey) {
-                                                        e.preventDefault(); // Предотвращаем добавление новой строки
-                                                        if (input.trim() && selectedTopicId) {
-                                                            sendMessage(input);
-                                                            setInput("");
-                                                        }
-                                                    }
-                                            }}
-                                        />
-                                        <Button 
-                                            className="gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
-                                            disabled={!selectedTopicId}
-                                            onClick={() => {
-                                                sendMessage(input);
-                                                setInput("")
-                                            }}
+                                        <form 
+                                            onSubmit={handleSubmit}
+                                            className="flex gap-3 w-full"
                                         >
-                                            <Send size={16}/>
-                                            Отправить
-                                        </Button>
+                                            <Input
+                                                placeholder={"Написать сообщение..."}
+                                                value={input}
+                                                className="flex-1 bg-gray-50 border-gray-200 focus:bg-white"
+                                                disabled={!selectedTopicId}
+                                                onChange={(e) => setInput(e.target.value)}
+                                            />
+                                            <Button 
+                                                type="submit"
+                                                className="gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                                                disabled={!selectedTopicId || !input.trim()}
+                                            >
+                                                <Send size={16}/>
+                                                Отправить
+                                            </Button>
+                                        </form>
                                     </div>
                                     <div className="flex items-center gap-4 mt-3">
                                         <p className="text-xs text-gray-400">
                                             Нажмите Enter для отправки
                                         </p>
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-xs text-gray-300">•</span>
-                                            <span className="text-xs text-gray-400">
-                                                Поддерживается Markdown
-                                            </span>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
